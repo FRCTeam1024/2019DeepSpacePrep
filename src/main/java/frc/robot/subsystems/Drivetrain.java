@@ -10,7 +10,7 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
-//import frc.robot.commands.Drive.DriveWithJoysticks;
+import frc.robot.commands.DriveWithJoysticks;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -240,7 +240,7 @@ public class Drivetrain extends Subsystem {
 	}
 	
 	public void initDefaultCommand() {
-		//setDefaultCommand(new DriveWithJoysticks());
+		setDefaultCommand(new DriveWithJoysticks());
 	}
 
 	public void resetGyro() {

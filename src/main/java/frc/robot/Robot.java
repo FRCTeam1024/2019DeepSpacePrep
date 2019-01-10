@@ -7,9 +7,17 @@
 
 package frc.robot;
 
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
+
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.vision.VisionRunner;
+import edu.wpi.first.wpilibj.vision.VisionThread;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Relay;
@@ -23,6 +31,8 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Intake;
 
+import frc.robot.grip.GripTest;
+
 public class Robot extends TimedRobot {
 	public static Drivetrain drivetrain = new Drivetrain();
 	public static Lift lift = new Lift();
@@ -33,18 +43,39 @@ public class Robot extends TimedRobot {
 	Command m_autonomousCommand;
 	SendableChooser<String> autoChooser = new SendableChooser<String>();
 
+	private static final int IMG_WIDTH = 320;
+	private static final int IMG_HEIGHT = 240;
+	
+	private VisionThread visionThread;
+	private double centerX = 0.0;
+	private RobotDrive drive;
+	
+	private final Object imgLock = new Object();
+
 	@Override
 	public void robotInit() {
 		oi = new OI();
 		
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-			camera.setResolution(160, 120);
-			camera.setExposureManual(50);
-			camera.setBrightness(50);
-			camera.setWhiteBalanceManual(255);
+			//camera.setResolution(160, 120);
+			// camera.setExposureManual(50);
+			// camera.setBrightness(50);
+			// camera.setWhiteBalanceManual(255);
 			
-			camera.setFPS(30);
+			// camera.setFPS(30);
+
+			camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+			visionThread = new VisionThread(camera, new GripTest(), pipeline -> {
+				if (!pipeline.filterContoursOutput().isEmpty()) {
+					Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+					synchronized (imgLock) {
+						centerX = r.x + (r.width / 2);
+					}
+				}
+			});
+			visionThread.start();
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
