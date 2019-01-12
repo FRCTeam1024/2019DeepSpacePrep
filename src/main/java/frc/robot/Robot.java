@@ -67,14 +67,35 @@ public class Robot extends TimedRobot {
 
 			camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 			visionThread = new VisionThread(camera, new GripTest(), pipeline -> {
+
 				if (!pipeline.filterContoursOutput().isEmpty()) {
 					Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
 					synchronized (imgLock) {
 						centerX = r.x + (r.width / 2);
 					}
 				}
+
 			});
 			visionThread.start();
+
+			// visionThread above worked with GripTest to detect 1 object;
+			// but it was also detecting 'junk' objects, i.e. other than the yellow square
+			// we wanted, so we changed the Pipeline in GRIP to detect a blob, which is
+			// below, but not yet working because we don't know yet how to process the 
+			// blob pipeline output
+
+			// visionThread = new VisionThread(camera, new GripBlobPipeline(), pipeline -> {
+
+			// 	if (!pipeline.findBlobsOutput().empty()){
+			// 		MatOfKeyPoint mat = pipeline.findBlobsOutput();
+			// 		mat.size();
+			// 		Rect r = Imgproc.boundingRect(pipeline.findBlobsOutput());
+			// 		synchronized (imgLock) {
+			// 			centerX = r.x + (r.width / 2);
+			// 		}
+			// 	}
+
+			// });
 
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -121,6 +142,15 @@ public class Robot extends TimedRobot {
 		//drivetrain.outputToSmartDashboard();
 		//lift.outputToSmartDashboard();
 		//intake.outputToSmartDashboard();
+
+		// display values from camera
+		double centerX;
+		synchronized (imgLock) {
+			centerX = this.centerX;
+		}
+		SmartDashboard.putNumber("Image Center X", centerX);
+		// double turn = centerX - (IMG_WIDTH / 2);
+		// drive.arcadeDrive(-0.6, turn * 0.005);
 	}
 
 	@Override
