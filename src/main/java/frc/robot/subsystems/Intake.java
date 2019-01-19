@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.commands.IntakeWithJoystick;
 
 /**
  *
@@ -41,7 +42,7 @@ public class Intake extends Subsystem {
     	}
     }
     public void initDefaultCommand() {
-    	//setDefaultCommand(new IntakeWithJoystick());
+    	setDefaultCommand(new IntakeWithJoystick());
     }
   
     public void intakeSpeed(double Power) {
