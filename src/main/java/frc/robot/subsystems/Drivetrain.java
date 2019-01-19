@@ -172,6 +172,10 @@ public class Drivetrain extends Subsystem {
 		drive(-(netPower), netPower);
 	}
 	
+	public void turn(double power){
+		drive(-(power), power);
+	}
+
 	public void pidTurnLeftOneSide(double oppositeSidePower) {
 		double minPowerToMove = 0.5; // just a guess
 		double netPower = turnPID.get();

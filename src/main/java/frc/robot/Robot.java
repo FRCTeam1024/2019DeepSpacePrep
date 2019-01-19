@@ -7,6 +7,11 @@
 
 package frc.robot;
 
+import java.util.List;
+
+import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.KeyPoint;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 
@@ -30,8 +35,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Intake;
+import frc.robot.commands.*;
 
-import frc.robot.grip.GripTest;
+import frc.robot.grip.*;
 
 public class Robot extends TimedRobot {
 	public static Drivetrain drivetrain = new Drivetrain();
@@ -41,13 +47,16 @@ public class Robot extends TimedRobot {
 	public static OI oi;
 	
 	Command m_autonomousCommand;
+	Command turnTargetCommand;
 	SendableChooser<String> autoChooser = new SendableChooser<String>();
 
 	private static final int IMG_WIDTH = 320;
 	private static final int IMG_HEIGHT = 240;
 	
 	private VisionThread visionThread;
-	private double centerX = 0.0;
+	private static double centerX1 = 0.0;
+	private static double centerX2 = 0.0;
+	private static double numCameraObjects = 0.0;
 	private RobotDrive drive;
 	
 	private final Object imgLock = new Object();
@@ -55,9 +64,11 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		oi = new OI();
+
+		m_autonomousCommand = new SimpleTurn();
 		
 		try {
-			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
 			//camera.setResolution(160, 120);
 			// camera.setExposureManual(50);
 			// camera.setBrightness(50);
@@ -66,15 +77,32 @@ public class Robot extends TimedRobot {
 			// camera.setFPS(30);
 
 			camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
-			visionThread = new VisionThread(camera, new GripTest(), pipeline -> {
 
+			visionThread = new VisionThread(camera, new GreenLEDReflectiveTape(), pipeline -> {
+
+				System.out.println("in pipeline");
+				numCameraObjects = 0.0;
 				if (!pipeline.filterContoursOutput().isEmpty()) {
-					Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+					List<MatOfPoint> contours = pipeline.filterContoursOutput();
+					numCameraObjects = contours.size();
+					System.out.println("in pipeline, NOT EMPTY,num objects : " + numCameraObjects);
+					Rect r1 = Imgproc.boundingRect(contours.get(0));
 					synchronized (imgLock) {
-						centerX = r.x + (r.width / 2);
+						centerX1 = r1.x + (r1.width / 2);
 					}
+					if(contours.size() > 1) {
+						Rect r2 = Imgproc.boundingRect(contours.get(1));
+						synchronized (imgLock) {
+							centerX2 = r2.x + (r2.width / 2);
+						}
+					}
+					
+				} else {
+					System.out.println("in pipeline EMPTY ");
+					centerX1 = 0;
+					centerX2 = 0;
 				}
-
+				
 			});
 			visionThread.start();
 
@@ -83,20 +111,19 @@ public class Robot extends TimedRobot {
 			// we wanted, so we changed the Pipeline in GRIP to detect a blob, which is
 			// below, but not yet working because we don't know yet how to process the 
 			// blob pipeline output
+/*
+			visionThread = new VisionThread(camera, new GripBlobPipeline(), pipeline -> {
 
-			// visionThread = new VisionThread(camera, new GripBlobPipeline(), pipeline -> {
+				if (!pipeline.findBlobsOutput().empty()){
+					MatOfKeyPoint mat = pipeline.findBlobsOutput();
+					List<KeyPoint> keypoints = mat.toList();
+					synchronized (imgLock) {
+						// centerX1 = r.x + (r.width / 2);
+					}
+				}
 
-			// 	if (!pipeline.findBlobsOutput().empty()){
-			// 		MatOfKeyPoint mat = pipeline.findBlobsOutput();
-			// 		mat.size();
-			// 		Rect r = Imgproc.boundingRect(pipeline.findBlobsOutput());
-			// 		synchronized (imgLock) {
-			// 			centerX = r.x + (r.width / 2);
-			// 		}
-			// 	}
-
-			// });
-
+			});
+*/
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -104,6 +131,18 @@ public class Robot extends TimedRobot {
 	
 	}
 	
+	public static double getCenterX1(){
+		return centerX1;
+	}
+
+	public static double getCenterX2() {
+		return centerX2;
+	}
+
+	public static double getNumImageObjects() {
+		return numCameraObjects;
+	}
+
 	@Override
 	public void disabledInit() {
 		//drivetrain.setCoast();
@@ -144,12 +183,14 @@ public class Robot extends TimedRobot {
 		//intake.outputToSmartDashboard();
 
 		// display values from camera
-		double centerX;
+		double centerX1;
 		synchronized (imgLock) {
-			centerX = this.centerX;
+			centerX1 = this.centerX1;
 		}
-		SmartDashboard.putNumber("Image Center X", centerX);
-		// double turn = centerX - (IMG_WIDTH / 2);
+		SmartDashboard.putNumber("Num Image Objects", numCameraObjects);
+		SmartDashboard.putNumber("Image 1 Center X", centerX1);
+		SmartDashboard.putNumber("Image 2 Center X", centerX2);
+		// double turn = centerX1 - (IMG_WIDTH / 2);
 		// drive.arcadeDrive(-0.6, turn * 0.005);
 	}
 
@@ -163,6 +204,8 @@ public class Robot extends TimedRobot {
 			m_autonomousCommand.cancel();
 		}
 		//intake.cubeLight.set(Relay.Value.kForward);
+
+		turnTargetCommand = new TurnToTarget();
 	}
 	
 	@Override
@@ -173,6 +216,13 @@ public class Robot extends TimedRobot {
 		//lift.outputToSmartDashboard();
 		//intake.outputToSmartDashboard();
 		//intake.cubeLight.set(Relay.Value.kForward);
+
+		//turnTargetCommand.start();
+		double centerX1;
+		synchronized (imgLock) {
+			centerX1 = this.centerX1;
+		}
+		
 	}
 	
 	@Override
