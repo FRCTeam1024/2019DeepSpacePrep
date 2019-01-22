@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 public class TurnToTarget extends Command {
+
+  boolean isFinished = false;
+
   public TurnToTarget() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -25,18 +28,32 @@ public class TurnToTarget extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double targetX = ((Robot.getCenterX1() + Robot.getCenterX2()) / 2);
+    double targetX = 160;
+    double difX1 = Math.abs(targetX - Robot.getCenterX1());
+    double difX2 = Math.abs(targetX - Robot.getCenterX2());
+    System.out.println("Num Objects : " + Robot.getNumImageObjects());
     if(Robot.getNumImageObjects() < 2) {
       Robot.drivetrain.turn(0.50);
     } else {
-      Robot.drivetrain.turn(0);
+      System.out.println("Difx1: " + difX1);
+      System.out.println("Difx2: " + difX2);
+      System.out.println("Center X 1: " + Robot.getCenterX1());
+      System.out.println("Center X 2: " + Robot.getCenterX2());
+      if(Math.abs(difX1 - difX2) < 10) {
+        System.out.println("FINISHING TURN TO TARGET");
+        Robot.drivetrain.turn(0);
+        isFinished = true;
+      } else {
+        Robot.drivetrain.turn(0.50);
+      }
+      
     }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return isFinished;
   }
 
   // Called once after isFinished returns true

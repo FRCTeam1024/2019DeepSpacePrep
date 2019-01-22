@@ -56,17 +56,21 @@ public class Robot extends TimedRobot {
 	private VisionThread visionThread;
 	private static double centerX1 = 0.0;
 	private static double centerX2 = 0.0;
+	private static double centerY1 = 0.0;
+	private static double centerY2 = 0.0;
+
 	private static double numCameraObjects = 0.0;
 	private RobotDrive drive;
 	
-	private final Object imgLock = new Object();
+	private static final Object imgLock = new Object();
 
 	@Override
 	public void robotInit() {
 		oi = new OI();
 
-		m_autonomousCommand = new SimpleTurn();
-		
+		m_autonomousCommand = new TurnToTarget();
+		outputCameraToSmartDashboard();
+
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
 			//camera.setResolution(160, 120);
@@ -86,14 +90,34 @@ public class Robot extends TimedRobot {
 					List<MatOfPoint> contours = pipeline.filterContoursOutput();
 					numCameraObjects = contours.size();
 					System.out.println("in pipeline, NOT EMPTY,num objects : " + numCameraObjects);
+					System.out.println(contours.get(0));
 					Rect r1 = Imgproc.boundingRect(contours.get(0));
+					System.out.println("r1 : " + r1);
 					synchronized (imgLock) {
 						centerX1 = r1.x + (r1.width / 2);
+						centerY1 = r1.y + (r1.height / 2);
 					}
 					if(contours.size() > 1) {
 						Rect r2 = Imgproc.boundingRect(contours.get(1));
+						System.out.println("r2 : " + r2);
 						synchronized (imgLock) {
 							centerX2 = r2.x + (r2.width / 2);
+							centerY2 = r2.y + (r2.height / 2);
+
+						}
+
+						// make sure to assign the left-most image to centerX1
+						if(centerX2 < centerX1) {
+							synchronized (imgLock) {
+								double tempSave = centerX1;
+								centerX1 = centerX2;
+								centerX2 = tempSave;
+								System.out.println("CenterX2 < CenterX1");
+							}
+						}
+					} else {
+						synchronized (imgLock) {
+							centerX2 = 0;
 						}
 					}
 					
@@ -131,14 +155,28 @@ public class Robot extends TimedRobot {
 	
 	}
 	
-	public static double getCenterX1(){
+	public static synchronized double getCenterX1(){
+		synchronized (imgLock) {
 		return centerX1;
+		}
 	}
 
-	public static double getCenterX2() {
+	public static synchronized double getCenterX2() {
+		synchronized (imgLock) {
 		return centerX2;
+		}
 	}
 
+	public static synchronized double getCenterY1() {
+		synchronized (imgLock) {
+		return centerY1;
+		}
+	}
+	public static synchronized double getCenterY2() {
+		synchronized (imgLock) {
+		return centerY2;
+		}
+	}
 	public static double getNumImageObjects() {
 		return numCameraObjects;
 	}
@@ -164,8 +202,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		
-		
-		
 		//Robot.drivetrain.resetOpticalEncoder();
 		//Robot.drivetrain.resetGyro();
 		
@@ -182,6 +218,12 @@ public class Robot extends TimedRobot {
 		//lift.outputToSmartDashboard();
 		//intake.outputToSmartDashboard();
 
+		outputCameraToSmartDashboard();
+		// double turn = centerX1 - (IMG_WIDTH / 2);
+		// drive.arcadeDrive(-0.6, turn * 0.005);
+	}
+
+	private void outputCameraToSmartDashboard() {
 		// display values from camera
 		double centerX1;
 		synchronized (imgLock) {
@@ -190,16 +232,19 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Num Image Objects", numCameraObjects);
 		SmartDashboard.putNumber("Image 1 Center X", centerX1);
 		SmartDashboard.putNumber("Image 2 Center X", centerX2);
-		// double turn = centerX1 - (IMG_WIDTH / 2);
-		// drive.arcadeDrive(-0.6, turn * 0.005);
+		SmartDashboard.putNumber("Image 1 Center Y", centerY1);
+		SmartDashboard.putNumber("Image 2 Center Y", centerY2);
+
 	}
 
 	@Override
 	public void teleopInit() {
-		//drivetrain.setBrake();
-		//lift.disengageAirBag();
-		//intake.setCubeLight();
-		// This makes sure that the autonomous stops running when teleop starts running. If you want the autonomous to continue until interrupted by another command, remove this line or comment it out.
+		// drivetrain.setBrake();
+		// lift.disengageAirBag();
+		// intake.setCubeLight();
+		// This makes sure that the autonomous stops running when teleop starts running.
+		// If you want the autonomous to continue until interrupted by another command,
+		// remove this line or comment it out.
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
@@ -218,10 +263,7 @@ public class Robot extends TimedRobot {
 		//intake.cubeLight.set(Relay.Value.kForward);
 
 		//turnTargetCommand.start();
-		double centerX1;
-		synchronized (imgLock) {
-			centerX1 = this.centerX1;
-		}
+		outputCameraToSmartDashboard();
 		
 	}
 	
