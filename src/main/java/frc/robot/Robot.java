@@ -13,6 +13,7 @@ import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Rect;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.cscore.UsbCamera;
@@ -58,6 +59,11 @@ public class Robot extends TimedRobot {
 	private static double centerX2 = 0.0;
 	private static double centerY1 = 0.0;
 	private static double centerY2 = 0.0;
+	private static double r1X;
+	private static double r2X;
+	private static double r1Y;
+	private static double r2Y;
+	private static Size r1Size;
 
 	private static double numCameraObjects = 0.0;
 	private RobotDrive drive;
@@ -69,8 +75,7 @@ public class Robot extends TimedRobot {
 		oi = new OI();
 
 		m_autonomousCommand = new TurnToTarget();
-		outputCameraToSmartDashboard();
-
+		
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
 			//camera.setResolution(160, 120);
@@ -91,17 +96,23 @@ public class Robot extends TimedRobot {
 					numCameraObjects = contours.size();
 					System.out.println("in pipeline, NOT EMPTY,num objects : " + numCameraObjects);
 					System.out.println(contours.get(0));
-					Rect r1 = Imgproc.boundingRect(contours.get(0));
+					Rect r1 = Imgproc.boundingRect(contours.get(0));			
 					System.out.println("r1 : " + r1);
 					synchronized (imgLock) {
 						centerX1 = r1.x + (r1.width / 2);
+						r1X = r1.x;
+						r1Y = r1.y;
+						r1Size = r1.size();
 						centerY1 = r1.y + (r1.height / 2);
 					}
 					if(contours.size() > 1) {
 						Rect r2 = Imgproc.boundingRect(contours.get(1));
 						System.out.println("r2 : " + r2);
+
 						synchronized (imgLock) {
 							centerX2 = r2.x + (r2.width / 2);
+							r2X = r2.x;
+							r2Y = r2.y;
 							centerY2 = r2.y + (r2.height / 2);
 
 						}
@@ -148,6 +159,8 @@ public class Robot extends TimedRobot {
 
 			});
 */
+			outputCameraToSmartDashboard();
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -234,6 +247,13 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Image 2 Center X", centerX2);
 		SmartDashboard.putNumber("Image 1 Center Y", centerY1);
 		SmartDashboard.putNumber("Image 2 Center Y", centerY2);
+		SmartDashboard.putNumber("r1.x", r1X);
+		SmartDashboard.putNumber("r2.x", r2X);
+		SmartDashboard.putNumber("r1.y", r1Y);
+		SmartDashboard.putNumber("r2.y", r2Y);
+		SmartDashboard.putString("size", "size(" + r1Size.width + ", " + r1Size.height + ")");
+
+
 
 	}
 
