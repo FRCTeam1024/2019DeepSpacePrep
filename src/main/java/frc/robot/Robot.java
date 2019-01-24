@@ -59,6 +59,7 @@ public class Robot extends TimedRobot {
 	private static double centerX2 = 0.0;
 	private static double centerY1 = 0.0;
 	private static double centerY2 = 0.0;
+<<<<<<< HEAD
 	private static double r1X;
 	private static double r2X;
 	private static double r1Y;
@@ -66,6 +67,9 @@ public class Robot extends TimedRobot {
 	private static Size r1Size;
 	private static int r1Width;
 	private static int r2Width;
+=======
+	private static Size r1Size;
+>>>>>>> 2faf64792f3df6bf13f752397f0e2009229a9f0a
 
 	private static double numCameraObjects = 0.0;
 	private RobotDrive drive;
@@ -77,18 +81,27 @@ public class Robot extends TimedRobot {
 		oi = new OI();
 
 		m_autonomousCommand = new TurnToTarget();
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> 2faf64792f3df6bf13f752397f0e2009229a9f0a
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+
 			//camera.setResolution(160, 120);
 			// camera.setExposureManual(50);
 			// camera.setBrightness(50);
 			// camera.setWhiteBalanceManual(255);
 			
+<<<<<<< HEAD
 			 camera.setFPS(30);
+=======
+			camera.setFPS(30);
+>>>>>>> 2faf64792f3df6bf13f752397f0e2009229a9f0a
 
 			camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
-
+			outputCameraToSmartDashboard();
 			visionThread = new VisionThread(camera, new GreenLEDReflectiveTape(), pipeline -> {
 
 				System.out.println("in pipeline");
@@ -107,6 +120,8 @@ public class Robot extends TimedRobot {
 						r1Y = r1.y;
 						r1Size = r1.size();
 						centerY1 = r1.y + (r1.height / 2);
+						r1Size = r1.size();
+						System.out.println("r1 size:" + r1Size);
 					}
 					if(contours.size() > 1) {
 						Rect r2 = Imgproc.boundingRect(contours.get(1));
