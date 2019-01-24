@@ -13,6 +13,7 @@ import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Rect;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.cscore.UsbCamera;
@@ -58,6 +59,7 @@ public class Robot extends TimedRobot {
 	private static double centerX2 = 0.0;
 	private static double centerY1 = 0.0;
 	private static double centerY2 = 0.0;
+	private static Size r1Size;
 
 	private static double numCameraObjects = 0.0;
 	private RobotDrive drive;
@@ -69,19 +71,19 @@ public class Robot extends TimedRobot {
 		oi = new OI();
 
 		m_autonomousCommand = new TurnToTarget();
-		outputCameraToSmartDashboard();
 
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+
 			//camera.setResolution(160, 120);
 			// camera.setExposureManual(50);
 			// camera.setBrightness(50);
 			// camera.setWhiteBalanceManual(255);
 			
-			// camera.setFPS(30);
+			camera.setFPS(30);
 
 			camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
-
+			outputCameraToSmartDashboard();
 			visionThread = new VisionThread(camera, new GreenLEDReflectiveTape(), pipeline -> {
 
 				System.out.println("in pipeline");
@@ -96,6 +98,8 @@ public class Robot extends TimedRobot {
 					synchronized (imgLock) {
 						centerX1 = r1.x + (r1.width / 2);
 						centerY1 = r1.y + (r1.height / 2);
+						r1Size = r1.size();
+						System.out.println("r1 size:" + r1Size);
 					}
 					if(contours.size() > 1) {
 						Rect r2 = Imgproc.boundingRect(contours.get(1));
