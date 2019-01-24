@@ -29,18 +29,22 @@ public class TurnToTarget extends Command {
   @Override
   protected void execute() {
     double targetX = 160;
-    double difX1 = Math.abs(targetX - Robot.getCenterX1());
-    double difX2 = Math.abs(targetX - Robot.getCenterX2());
+    
+   // double difX1 = Math.abs(targetX - Robot.getCenterX1());
+   // double difX2 = Math.abs(targetX - Robot.getCenterX2());
     System.out.println("Num Objects : " + Robot.getNumImageObjects());
-    if(Robot.getNumImageObjects() < 2) {
-      if(Robot.getCenterX1() > 160){
-        Robot.drivetrain.turn(-0.15);
+    if(Robot.getNumImageObjects() != 2) {
+      if(Robot.getCenterX1() > targetX){
+        Robot.drivetrain.turn(0.15);
       }
-        else if (Robot.getCenterX1() < 160){
-          Robot.drivetrain.turn(0.15);
+        else {
+          Robot.drivetrain.turn(-0.15);
         }
-    } else{
-      Robot.drivetrain.turn(0);
+      
+  } else if((Robot.getr1Width() - Robot.getr2Width()) <= 1){
+        Robot.drivetrain.turn(0.0);
+        isFinished = true;
+  }
      /* System.out.println("Difx1: " + difX1);
       System.out.println("Difx2: " + difX2);
       System.out.println("Center X 1: " + Robot.getCenterX1());
@@ -53,7 +57,7 @@ public class TurnToTarget extends Command {
         Robot.drivetrain.turn(0.50);
       }*/
     }
-    }
+    
   
 
   // Make this return true when this Command no longer needs to run execute()

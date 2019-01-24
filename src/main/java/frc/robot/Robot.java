@@ -64,6 +64,8 @@ public class Robot extends TimedRobot {
 	private static double r1Y;
 	private static double r2Y;
 	private static Size r1Size;
+	private static int r1Width;
+	private static int r2Width;
 
 	private static double numCameraObjects = 0.0;
 	private RobotDrive drive;
@@ -83,7 +85,7 @@ public class Robot extends TimedRobot {
 			// camera.setBrightness(50);
 			// camera.setWhiteBalanceManual(255);
 			
-			// camera.setFPS(30);
+			 camera.setFPS(30);
 
 			camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 
@@ -99,7 +101,8 @@ public class Robot extends TimedRobot {
 					Rect r1 = Imgproc.boundingRect(contours.get(0));			
 					System.out.println("r1 : " + r1);
 					synchronized (imgLock) {
-						centerX1 = r1.x + (r1.width / 2);
+						r1Width = r1.width;
+						centerX1 = r1.x + (r1Width / 2);
 						r1X = r1.x;
 						r1Y = r1.y;
 						r1Size = r1.size();
@@ -110,6 +113,7 @@ public class Robot extends TimedRobot {
 						System.out.println("r2 : " + r2);
 
 						synchronized (imgLock) {
+							r2Width = r2.width;
 							centerX2 = r2.x + (r2.width / 2);
 							r2X = r2.x;
 							r2Y = r2.y;
@@ -193,6 +197,15 @@ public class Robot extends TimedRobot {
 	public static double getNumImageObjects() {
 		return numCameraObjects;
 	}
+	public static double getEncoderValue() {
+		return drivetrain.encoder.getDistance();
+	}
+	public static double getr1Width() {
+		return r1Width;
+	}
+	public static double getr2Width() {
+		return r2Width;
+	}
 
 	@Override
 	public void disabledInit() {
@@ -252,7 +265,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("r1.y", r1Y);
 		SmartDashboard.putNumber("r2.y", r2Y);
 		SmartDashboard.putString("size", "size(" + r1Size.width + ", " + r1Size.height + ")");
-
+		SmartDashboard.putNumber("Encoder Value:", getEncoderValue());
 
 
 	}
