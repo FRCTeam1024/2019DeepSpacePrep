@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TurnToTarget extends Command {
 
@@ -28,21 +29,29 @@ public class TurnToTarget extends Command {
   protected void execute() {
     double targetX = 160;
     
-   // double difX1 = Math.abs(targetX - Robot.getCenterX1());
-   // double difX2 = Math.abs(targetX - Robot.getCenterX2());
+   double difX1 = Math.abs(targetX - Robot.getCenterX1());
+   double difX2 = Math.abs(targetX - Robot.getCenterX2());
     System.out.println("Num Objects : " + Robot.getNumImageObjects());
-    if(Robot.getNumImageObjects() != 2) {
-      if(Robot.getCenterX1() > targetX){
-        Robot.drivetrain.turn(0.15);
+    if(Robot.getNumImageObjects() < 2) {
+      if(Robot.getCenterX1() >= targetX) { // single target on right side, so we want to turn right
+        // Robot.drivetrain.turn(0.15);
+        Robot.drivetrain.drive(-0.40, -0.20);
       }
-        else {
-          Robot.drivetrain.turn(-0.15);
-        }
-      
-  } else if((Robot.getr1Width() - Robot.getr2Width()) <= 1){
-        Robot.drivetrain.turn(0.0);
+      else if(Robot.getCenterX1() <= targetX) {//  single target on left side, so we want to turn left
+        Robot.drivetrain.drive(-0.20, -0.40);
+        //Robot.drivetrain.turn(-0.15);
+      }
+    // } else if(Robot.getr1Width() - Robot.getr2Width() <= 5 ) {
+    } else if(Robot.getNumImageObjects() == 2) {
+      if(Math.abs(difX1 - difX2) < 5) {
+        Robot.drivetrain.drive(0.0, 0.0);
+          //Robot.drivetrain.turn(0.0);
+          
+        SmartDashboard.putNumber("difx1", difX1);
+        SmartDashboard.putNumber("difx2", difX2);
         isFinished = true;
-  }
+      }
+    }
      /* System.out.println("Difx1: " + difX1);
       System.out.println("Difx2: " + difX2);
       System.out.println("Center X 1: " + Robot.getCenterX1());

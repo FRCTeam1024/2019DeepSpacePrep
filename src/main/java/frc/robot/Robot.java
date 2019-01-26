@@ -83,8 +83,8 @@ public class Robot extends TimedRobot {
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
 
-			camera.setResolution(160, 120);
-			camera.setExposureManual(5);
+			//camera.setResolution(160, 120);
+			camera.setExposureManual(15);
 			camera.setBrightness(50);
 			camera.setWhiteBalanceManual(255);
 
@@ -92,17 +92,17 @@ public class Robot extends TimedRobot {
 
 			camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 			outputCameraToSmartDashboard();
-			visionThread = new VisionThread(camera, new GreenLEDReflectiveTape(), pipeline -> {
+			visionThread = new VisionThread(camera, new ReflectiveTapeTest(), pipeline -> {
 
-				System.out.println("in pipeline");
+				// System.out.println("in pipeline");
 				numCameraObjects = 0.0;
 				if (!pipeline.filterContoursOutput().isEmpty()) {
 					List<MatOfPoint> contours = pipeline.filterContoursOutput();
 					numCameraObjects = contours.size();
 					System.out.println("in pipeline, NOT EMPTY,num objects : " + numCameraObjects);
-					System.out.println(contours.get(0));
+					// System.out.println(contours.get(0));
 					Rect r1 = Imgproc.boundingRect(contours.get(0));			
-					System.out.println("r1 : " + r1);
+					// System.out.println("r1 : " + r1);
 					synchronized (imgLock) {
 						r1Width = r1.width;
 						centerX1 = r1.x + (r1Width / 2);
@@ -112,11 +112,11 @@ public class Robot extends TimedRobot {
 						r1Size = r1.size();
 						centerY1 = r1.y + (r1.height / 2);
 						r1Size = r1.size();
-						System.out.println("r1 size:" + r1Size);
+						// System.out.println("r1 size:" + r1Size);
 					}
 					if(contours.size() > 1) {
 						Rect r2 = Imgproc.boundingRect(contours.get(1));
-						System.out.println("r2 : " + r2);
+						// System.out.println("r2 : " + r2);
 
 						synchronized (imgLock) {
 							r2Width = r2.width;
@@ -133,15 +133,27 @@ public class Robot extends TimedRobot {
 							synchronized (imgLock) {
 								double tempSave = centerX1;
 								centerX1 = centerX2;
-								r1X = r2X;
-								r1Y = r2Y;
 								centerX2 = tempSave;
-								System.out.println("CenterX2 < CenterX1");
+								tempSave = r1X;
+								r1X = r2X;
+								r2X = tempSave;
+								tempSave = r1Y;
+								r1Y = r2Y;
+								r2Y = tempSave;
+								int tempSaveInt = r1Width;
+								r1Width = r2Width;
+								r2Width = tempSaveInt;
+								tempSaveInt = r1Height;
+								r1Height = r2Height;
+								r2Height = tempSaveInt;
+
+								// System.out.println("CenterX2 < CenterX1");
 							}
 						}
-					} else {
+					} else { // only 1 object 
 						synchronized (imgLock) {
 							centerX2 = 0;
+							r2Width = 0;
 						}
 					}
 					
@@ -221,6 +233,7 @@ public class Robot extends TimedRobot {
 	public static double getR2Area(){
 		return (r2Height*r2Width);
 	}
+	
 
 	@Override
 	public void disabledInit() {
@@ -273,18 +286,21 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Num Image Objects", numCameraObjects);
 		SmartDashboard.putNumber("Image 1 Center X", centerX1);
 		SmartDashboard.putNumber("Image 2 Center X", centerX2);
-		SmartDashboard.putNumber("Image 1 Center Y", centerY1);
-		SmartDashboard.putNumber("Image 2 Center Y", centerY2);
-		SmartDashboard.putNumber("r1.x", r1X);
-		SmartDashboard.putNumber("r2.x", r2X);
-		SmartDashboard.putNumber("r1.y", r1Y);
-		SmartDashboard.putNumber("r2.y", r2Y);
+		// SmartDashboard.putNumber("Image 1 Center Y", centerY1);
+		// SmartDashboard.putNumber("Image 2 Center Y", centerY2);
+		// SmartDashboard.putNumber("r1.x", r1X);
+		// SmartDashboard.putNumber("r2.x", r2X);
+		// SmartDashboard.putNumber("r1.y", r1Y);
+		// SmartDashboard.putNumber("r2.y", r2Y);
+		SmartDashboard.putNumber("r1Width", r1Width);
+		SmartDashboard.putNumber("r2Width", r2Width);
 		//SmartDashboard.putString("size", "size(" + r1Size.width + ", " + r1Size.height + ")");
 		SmartDashboard.putNumber("Encoder Value:", getEncoderValue());
 		SmartDashboard.putNumber("R1 Area", getR1Area());
 		SmartDashboard.putNumber("R2 Area", getR2Area());
 		SmartDashboard.putNumber("Angle", drivetrain.getHeading());
 		SmartDashboard.putData("Reset Gyro", new resetGyro());
+		SmartDashboard.putData("Turn To Target", new TurnToTarget());
 
 	}
 	@Override

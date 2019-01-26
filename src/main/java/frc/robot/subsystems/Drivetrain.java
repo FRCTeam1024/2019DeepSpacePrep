@@ -233,7 +233,8 @@ public class Drivetrain extends Subsystem {
 		frontLeft.set(ControlMode.PercentOutput, -leftPower);
 		frontRight.set(ControlMode.PercentOutput, rightPower);
 	}
-	
+
+
 	public void setFollower(TalonSRX slave, TalonSRX master) {
 		slave.set(ControlMode.Follower, master.getDeviceID());
 	}
@@ -300,6 +301,8 @@ public class Drivetrain extends Subsystem {
 		
 	}
 	
+	
+
 	public void setRamp(double secondsUntilFull) {
 		frontLeft.configOpenloopRamp(secondsUntilFull, 10);
 		middleLeft.configOpenloopRamp(secondsUntilFull, 10);

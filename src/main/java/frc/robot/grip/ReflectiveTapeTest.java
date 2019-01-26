@@ -42,9 +42,9 @@ public class ReflectiveTapeTest implements VisionPipeline {
 	@Override	public void process(Mat source0) {
 		// Step HSL_Threshold0:
 		Mat hslThresholdInput = source0;
-		double[] hslThresholdHue = {0.0, 92.45733788395903};
-		double[] hslThresholdSaturation = {82.55395683453237, 255.0};
-		double[] hslThresholdLuminance = {240.7823741007194, 255.0};
+		double[] hslThresholdHue = {80.93525179856114, 110.88737201365187};
+		double[] hslThresholdSaturation = {105.48561151079136, 255.0};
+		double[] hslThresholdLuminance = {55.03597122302158, 135.33276450511946};
 		hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
 
 		// Step Find_Contours0:
@@ -54,15 +54,15 @@ public class ReflectiveTapeTest implements VisionPipeline {
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 400.0;
+		double filterContoursMinArea = 1000.0;
 		double filterContoursMinPerimeter = 0.0;
 		double filterContoursMinWidth = 0.0;
-		double filterContoursMaxWidth = 50.0;
+		double filterContoursMaxWidth = 43000.0;
 		double filterContoursMinHeight = 0.0;
 		double filterContoursMaxHeight = 1000.0;
-		double[] filterContoursSolidity = {73.74100719424462, 100};
-		double filterContoursMaxVertices = 500.0;
-		double filterContoursMinVertices = 10.0;
+		double[] filterContoursSolidity = {0, 100};
+		double filterContoursMaxVertices = 1000000.0;
+		double filterContoursMinVertices = 0.0;
 		double filterContoursMinRatio = 0.0;
 		double filterContoursMaxRatio = 1000.0;
 		filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
