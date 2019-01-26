@@ -10,11 +10,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class TurnToTarget extends Command {
 
-  boolean isFinished = false;
+public class DriveToTargetStraight extends Command {
 
-  public TurnToTarget() {
+  double leftPower;
+  double rightPower;
+  public DriveToTargetStraight(double leftPower, double rightPower) {
+
     requires(Robot.drivetrain);
   }
 
@@ -26,42 +28,14 @@ public class TurnToTarget extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double targetX = 160;
-    
-   // double difX1 = Math.abs(targetX - Robot.getCenterX1());
-   // double difX2 = Math.abs(targetX - Robot.getCenterX2());
-    System.out.println("Num Objects : " + Robot.getNumImageObjects());
-    if(Robot.getNumImageObjects() != 2) {
-      if(Robot.getCenterX1() > targetX){
-        Robot.drivetrain.turn(0.15);
-      }
-        else {
-          Robot.drivetrain.turn(-0.15);
-        }
-      
-  } else if((Robot.getr1Width() - Robot.getr2Width()) <= 1){
-        Robot.drivetrain.turn(0.0);
-        isFinished = true;
+    Robot.drivetrain.drive(leftPower, rightPower);
+
   }
-     /* System.out.println("Difx1: " + difX1);
-      System.out.println("Difx2: " + difX2);
-      System.out.println("Center X 1: " + Robot.getCenterX1());
-      System.out.println("Center X 2: " + Robot.getCenterX2());
-      if(Math.abs(difX1 - difX2) < 10) {
-        System.out.println("FINISHING TURN TO TARGET");
-        Robot.drivetrain.turn(0);
-        isFinished = true;
-      } else {
-        Robot.drivetrain.turn(0.50);
-      }*/
-    }
-    
-  
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return isFinished;
+    return false;
   }
 
   // Called once after isFinished returns true

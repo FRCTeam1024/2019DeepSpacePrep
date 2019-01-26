@@ -259,7 +259,7 @@ public class Drivetrain extends Subsystem {
 	
 	
 	public double getOpticalDistanceInches() {
-		/*//getWheelRotation() = distance / (Math.PI * RobotMap.WHEEL_DIAMETER) * RobotMap.ENCODER_COUNTS_PER_REVOLUTION;
+	/*	getWheelRotation() = distance / (Math.PI * RobotMap.WHEEL_DIAMETER) * RobotMap.ENCODER_COUNTS_PER_REVOLUTION;
 		return (((getRawMagneticEncoder() / RobotMap.ENCODER_RATIO_TO_WHEEL * Math.PI * RobotMap.WHEEL_DIAMETER) / 
 				RobotMap.OPTICAL_ENCODER_COUNTS_PER_REVOLUTION)/ 4) * 3 * 3;*/
 		return encoder.getDistance(); //must have a specified distance per pulse set

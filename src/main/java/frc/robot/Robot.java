@@ -49,6 +49,7 @@ public class Robot extends TimedRobot {
 	
 	Command m_autonomousCommand;
 	Command turnTargetCommand;
+	Command driveTargetCommand;
 	SendableChooser<String> autoChooser = new SendableChooser<String>();
 
 	private static final int IMG_WIDTH = 320;
@@ -66,6 +67,8 @@ public class Robot extends TimedRobot {
 	private static Size r1Size;
 	private static int r1Width;
 	private static int r2Width;
+	private static int r1Height;
+	private static int r2Height;
 
 	private static double numCameraObjects = 0.0;
 	private RobotDrive drive;
@@ -75,16 +78,15 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		oi = new OI();
-
 		m_autonomousCommand = new TurnToTarget();
 		
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
 
-			//camera.setResolution(160, 120);
-			// camera.setExposureManual(50);
-			// camera.setBrightness(50);
-			// camera.setWhiteBalanceManual(255);
+			camera.setResolution(160, 120);
+			camera.setExposureManual(5);
+			camera.setBrightness(50);
+			camera.setWhiteBalanceManual(255);
 
 			camera.setFPS(30);
 
@@ -106,6 +108,7 @@ public class Robot extends TimedRobot {
 						centerX1 = r1.x + (r1Width / 2);
 						r1X = r1.x;
 						r1Y = r1.y;
+						r1Height = r1.height;
 						r1Size = r1.size();
 						centerY1 = r1.y + (r1.height / 2);
 						r1Size = r1.size();
@@ -120,6 +123,7 @@ public class Robot extends TimedRobot {
 							centerX2 = r2.x + (r2.width / 2);
 							r2X = r2.x;
 							r2Y = r2.y;
+							r2Height = r2.height;
 							centerY2 = r2.y + (r2.height / 2);
 
 						}
@@ -129,6 +133,8 @@ public class Robot extends TimedRobot {
 							synchronized (imgLock) {
 								double tempSave = centerX1;
 								centerX1 = centerX2;
+								r1X = r2X;
+								r1Y = r2Y;
 								centerX2 = tempSave;
 								System.out.println("CenterX2 < CenterX1");
 							}
@@ -206,8 +212,14 @@ public class Robot extends TimedRobot {
 	public static double getr1Width() {
 		return r1Width;
 	}
-	public static double getr2Width() {
+	public static double getr2Width(){
 		return r2Width;
+	}
+	public static double getR1Area() {
+		return (r1Height *r1Width);
+	}
+	public static double getR2Area(){
+		return (r2Height*r2Width);
 	}
 
 	@Override
@@ -267,14 +279,17 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("r2.x", r2X);
 		SmartDashboard.putNumber("r1.y", r1Y);
 		SmartDashboard.putNumber("r2.y", r2Y);
-		SmartDashboard.putString("size", "size(" + r1Size.width + ", " + r1Size.height + ")");
+		//SmartDashboard.putString("size", "size(" + r1Size.width + ", " + r1Size.height + ")");
 		SmartDashboard.putNumber("Encoder Value:", getEncoderValue());
-
+		SmartDashboard.putNumber("R1 Area", getR1Area());
+		SmartDashboard.putNumber("R2 Area", getR2Area());
+		SmartDashboard.putNumber("Angle", drivetrain.getHeading());
+		SmartDashboard.putData("Reset Gyro", new resetGyro());
 
 	}
-
 	@Override
 	public void teleopInit() {
+		
 		// drivetrain.setBrake();
 		// lift.disengageAirBag();
 		// intake.setCubeLight();
@@ -287,6 +302,7 @@ public class Robot extends TimedRobot {
 		//intake.cubeLight.set(Relay.Value.kForward);
 
 		turnTargetCommand = new TurnToTarget();
+		driveTargetCommand = new DriveToTargetStraight(0.15, 0.15);
 	}
 	
 	@Override
