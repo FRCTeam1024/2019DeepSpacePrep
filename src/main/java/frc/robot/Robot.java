@@ -335,9 +335,7 @@ public class Robot extends TimedRobot {
 		}
 		//intake.cubeLight.set(Relay.Value.kForward);
 
-		if(Robot.oi.rJoy.getTriggerPressed()){
-			new TurnToTarget();
-		}
+	
 		driveTargetCommand = new DriveToTargetStraight(0.15, 0.15);
 		
 

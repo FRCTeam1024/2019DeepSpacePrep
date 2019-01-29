@@ -30,10 +30,10 @@ public class OI {
   JoystickButton closeClamp 		  = new JoystickButton(logi, Constants.LIFT_CLAMP_CLOSE_BUTTON);
 	JoystickButton openClamp          = new JoystickButton(logi, Constants.LIFT_CLAMP_OPEN_BUTTON);
 	//JoystickButton intakeStartAcquire = new JoystickButton(logi, Constants.INTAKE_START_ACQUIRE);
-	JoystickButton switchHeight   	  = new JoystickButton(logi, Constants.REACH_SWITCH_HEIGHT);
+	//JoystickButton switchHeight   	  = new JoystickButton(logi, Constants.REACH_SWITCH_HEIGHT);
 	//JoystickButton zeroHeight         = new JoystickButton(logi, Constants.REACH_ZERO_HEIGHT);
-	JoystickButton portalHeight       = new JoystickButton(logi, Constants.REACH_PORTAL_HEIGHT);
-	JoystickButton scaleHeight		  = new JoystickButton(logi, Constants.REACH_SCALE_HEIGHT);
+	//JoystickButton portalHeight       = new JoystickButton(logi, Constants.REACH_PORTAL_HEIGHT);
+	//JoystickButton scaleHeight		  = new JoystickButton(logi, Constants.REACH_SCALE_HEIGHT);
 	JoystickButton engageAirbag       = new JoystickButton(logi, Constants.ENGAGE_AIRBAG_BUTTON);
 	JoystickButton disengageAirbag    = new JoystickButton(logi, Constants.DISENGAGE_AIRBAG_BUTTON);
 	
@@ -46,5 +46,6 @@ public class OI {
 		logi.dPad.right.whenPressed(new IntakeFlat());
 		logi.dPad.upLeft.whenPressed(new IntakeExtendNarrow());
 		logi.dPad.upRight.whenPressed(new IntakeExtendFlat());
+		logi.a.whenPressed(new TurnToTarget());
 	}
 }
