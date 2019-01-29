@@ -18,12 +18,13 @@ import frc.robot.commands.*;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-  public final Joystick lJoy = new Joystick(Constants.LEFT_JOYSTICK_PORT);
+	public final Joystick lJoy = new Joystick(Constants.LEFT_JOYSTICK_PORT);
 	public final Joystick rJoy = new Joystick(Constants.RIGHT_JOYSTICK_PORT);
 	public final Logitech logi = new Logitech(Constants.LOGITECH_JOYSTICK_PORT);
 
 	JoystickButton leftShiftHigh      = new JoystickButton(lJoy, Constants.SHIFT_HIGH_BUTTON);
 	JoystickButton leftShiftLow       = new JoystickButton(lJoy, Constants.SHIFT_LOW_BUTTON);
+	//JoystickButton backToDriveWithJoystick = new JoystickButton(lJoy, Constants.LEFT_JOYSTICK_TRIGGER);
 	JoystickButton rightShiftHigh     = new JoystickButton(rJoy, Constants.SHIFT_HIGH_BUTTON);
 	JoystickButton rightShiftLow      = new JoystickButton(rJoy, Constants.SHIFT_LOW_BUTTON);
   JoystickButton closeClamp 		  = new JoystickButton(logi, Constants.LIFT_CLAMP_CLOSE_BUTTON);

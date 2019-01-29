@@ -233,6 +233,23 @@ public class Robot extends TimedRobot {
 	public static double getR2Area(){
 		return (r2Height*r2Width);
 	}
+	public static double getdifX1(){
+		double targetX = 160;
+		double difX1 = 0;
+		if(getNumImageObjects() == 1){
+		difX1 = targetX - Robot.getCenterX1();
+		}
+		return difX1;
+	}
+	public static double getdifX2(){
+		double targetX = 160;
+		double difX2 = 0;
+		if(getNumImageObjects() > 1){
+		 difX2 = targetX - Robot.getCenterX2();
+		}
+		return difX2;
+		
+	}
 	
 
 	@Override
@@ -300,7 +317,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("R2 Area", getR2Area());
 		SmartDashboard.putNumber("Angle", drivetrain.getHeading());
 		SmartDashboard.putData("Reset Gyro", new resetGyro());
-		SmartDashboard.putData("Turn To Target", new TurnToTarget());
+		SmartDashboard.putNumber("difx1", getdifX1());
+		SmartDashboard.putNumber("difx2", getdifX2());
 
 	}
 	@Override
@@ -317,8 +335,12 @@ public class Robot extends TimedRobot {
 		}
 		//intake.cubeLight.set(Relay.Value.kForward);
 
-		turnTargetCommand = new TurnToTarget();
+		if(Robot.oi.rJoy.getTriggerPressed()){
+			new TurnToTarget();
+		}
 		driveTargetCommand = new DriveToTargetStraight(0.15, 0.15);
+		
+
 	}
 	
 	@Override

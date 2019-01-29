@@ -9,7 +9,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.OI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.Trigger;
+import edu.wpi.first.wpilibj.buttons.Trigger.ButtonScheduler;
 
 public class TurnToTarget extends Command {
 
@@ -27,30 +33,42 @@ public class TurnToTarget extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    if(Robot.oi.lJoy.getTriggerPressed()){
+      isFinished = true;
+    }
+
+
     double targetX = 160;
     
-   double difX1 = Math.abs(targetX - Robot.getCenterX1());
-   double difX2 = Math.abs(targetX - Robot.getCenterX2());
+   double difX1 = targetX - Robot.getCenterX1();
+   double difX2 = targetX - Robot.getCenterX2();
     System.out.println("Num Objects : " + Robot.getNumImageObjects());
     if(Robot.getNumImageObjects() < 2) {
-      if(Robot.getCenterX1() >= targetX) { // single target on right side, so we want to turn right
+      if(Robot.getdifX1() < 0) { // single target on right side, so we want to turn right
         // Robot.drivetrain.turn(0.15);
         Robot.drivetrain.drive(-0.40, -0.20);
       }
-      else if(Robot.getCenterX1() <= targetX) {//  single target on left side, so we want to turn left
+      else if(Robot.getdifX1() > 0) {//  single target on left side, so we want to turn left
         Robot.drivetrain.drive(-0.20, -0.40);
         //Robot.drivetrain.turn(-0.15);
       }
     // } else if(Robot.getr1Width() - Robot.getr2Width() <= 5 ) {
     } else if(Robot.getNumImageObjects() == 2) {
-      if(Math.abs(difX1 - difX2) < 5) {
-        Robot.drivetrain.drive(0.0, 0.0);
+      if(Robot.getdifX1() > 0 && Robot.getdifX2() < 0) {
+        Robot.drivetrain.drive(-0.10, -0.10);
           //Robot.drivetrain.turn(0.0);
-          
-        SmartDashboard.putNumber("difx1", difX1);
-        SmartDashboard.putNumber("difx2", difX2);
         isFinished = true;
       }
+      else if(Robot.getdifX1() < 0 && Robot.getdifX2() < 0){
+        Robot.drivetrain.drive(-0.40, -0.20);
+      }
+      else if(Robot.getdifX1() > 0 && Robot.getdifX2() > 0){
+        Robot.drivetrain.drive(-0.20, -0.40);
+      }
+      }
+      
+
+
     }
      /* System.out.println("Difx1: " + difX1);
       System.out.println("Difx2: " + difX2);
@@ -63,7 +81,7 @@ public class TurnToTarget extends Command {
       } else {
         Robot.drivetrain.turn(0.50);
       }*/
-    }
+    
     
   
 
