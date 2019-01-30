@@ -21,6 +21,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.RobotState;
@@ -32,6 +33,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
@@ -47,9 +49,10 @@ public class Drivetrain extends Subsystem {
 	private Solenoid shifter = new Solenoid(RobotMap.SHIFTER_PORT);
 	//private AHRS navx;
 	private AnalogGyro navx;
-	
+	private I2C ColorSensor;
+
 	public double rotateToAngleRate;
-	
+	 
 //	public double pidGet;
 	
 	//Remove these and any references when set properly
@@ -76,6 +79,8 @@ public class Drivetrain extends Subsystem {
 		
 		//navx = new AHRS(RobotMap.NAVX_PORT);
 		navx = new AnalogGyro(0);
+		ColorSensor = new I2C(RobotMap.COLOR_SENSOR_PORT, 0x39);
+
 		//navx = new AHRS(SerialPort.Port.kUSB);
 		navx.setPIDSourceType(PIDSourceType.kDisplacement);
 		navx.reset();
@@ -319,4 +324,9 @@ public class Drivetrain extends Subsystem {
 	public boolean getShiftState() {
 		return shifter.get();
 	}
+	
+
+
+
+
 }

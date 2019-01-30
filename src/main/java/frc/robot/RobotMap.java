@@ -37,7 +37,8 @@ public class RobotMap {
 	
 	//I2C
 	public static final Port NAVX_PORT = Port.kMXP;
-	
+	public static final Port COLOR_SENSOR_PORT = Port.kOnboard;
+
 	//Analog
 	public static final int ULTRASONIC_PORT = 0;
 	

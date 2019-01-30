@@ -32,6 +32,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.I2C;
+
 
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lift;
@@ -319,7 +321,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Reset Gyro", new resetGyro());
 		SmartDashboard.putNumber("difx1", getdifX1());
 		SmartDashboard.putNumber("difx2", getdifX2());
-
+		SmartDashboard.putData("TurnToTarget", new TurnToTarget());
 	}
 	@Override
 	public void teleopInit() {
