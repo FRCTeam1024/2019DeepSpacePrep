@@ -33,6 +33,10 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Intake;
@@ -79,9 +83,13 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		oi = new OI();
 		m_autonomousCommand = new TurnToTarget();
-		
+		NetworkTableEntry xEntry;
+		NetworkTableEntry yEntry;
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+			NetworkTable table = NetworkTableInstance.getDefault().getTable("GRIP/myContoursReport");
+			xEntry = table.getEntry("X");
+			yEntry = table.getEntry("Y");
 
 			//camera.setResolution(160, 120);
 			camera.setExposureManual(15);
@@ -165,12 +173,6 @@ public class Robot extends TimedRobot {
 				
 			});
 			visionThread.start();
-
-			// visionThread above worked with GripTest to detect 1 object;
-			// but it was also detecting 'junk' objects, i.e. other than the yellow square
-			// we wanted, so we changed the Pipeline in GRIP to detect a blob, which is
-			// below, but not yet working because we don't know yet how to process the 
-			// blob pipeline output
 /*
 			visionThread = new VisionThread(camera, new GripBlobPipeline(), pipeline -> {
 
