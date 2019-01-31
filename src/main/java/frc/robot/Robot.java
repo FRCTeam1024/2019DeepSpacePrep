@@ -35,15 +35,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.I2C;
 
 
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Lift;
-import frc.robot.subsystems.Intake;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 
 import frc.robot.grip.*;
 
 public class Robot extends TimedRobot {
 	public static Drivetrain drivetrain = new Drivetrain();
+	public static Sensors sensors = new Sensors();
 	public static Lift lift = new Lift();
 	public static Intake intake = new Intake();
 	public static PowerDistributionPanel pdp = new PowerDistributionPanel();
@@ -81,9 +84,15 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		oi = new OI();
 		m_autonomousCommand = new TurnToTarget();
-		
+		NetworkTableEntry xEntry;
+		NetworkTableEntry yEntry;
+		Robot.sensors.startColorSensor();
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+			NetworkTable table = NetworkTableInstance.getDefault().getTable("GRIP/myContoursReport");
+
+			xEntry = table.getEntry("X");
+			yEntry = table.getEntry("Y");
 
 			//camera.setResolution(160, 120);
 			camera.setExposureManual(15);
@@ -167,12 +176,6 @@ public class Robot extends TimedRobot {
 				
 			});
 			visionThread.start();
-
-			// visionThread above worked with GripTest to detect 1 object;
-			// but it was also detecting 'junk' objects, i.e. other than the yellow square
-			// we wanted, so we changed the Pipeline in GRIP to detect a blob, which is
-			// below, but not yet working because we don't know yet how to process the 
-			// blob pipeline output
 /*
 			visionThread = new VisionThread(camera, new GripBlobPipeline(), pipeline -> {
 
@@ -322,6 +325,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("difx1", getdifX1());
 		SmartDashboard.putNumber("difx2", getdifX2());
 		SmartDashboard.putData("TurnToTarget", new TurnToTarget());
+		Robot.sensors.printValue();
 	}
 	@Override
 	public void teleopInit() {
@@ -337,9 +341,7 @@ public class Robot extends TimedRobot {
 		}
 		//intake.cubeLight.set(Relay.Value.kForward);
 
-		if(Robot.oi.rJoy.getTriggerPressed()){
-			new TurnToTarget();
-		}
+	
 		driveTargetCommand = new DriveToTargetStraight(0.15, 0.15);
 		
 
@@ -356,7 +358,7 @@ public class Robot extends TimedRobot {
 
 		//turnTargetCommand.start();
 		outputCameraToSmartDashboard();
-		
+	
 	}
 	
 	@Override

@@ -33,6 +33,9 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 
 /**
@@ -45,7 +48,7 @@ public class Drivetrain extends Subsystem {
 	private TalonSRX frontRight = new TalonSRX(RobotMap.FRONT_RIGHT_MOTOR_PORT);
 	private TalonSRX middleRight = new TalonSRX(RobotMap.MIDDLE_RIGHT_MOTOR_PORT);
 	private TalonSRX rearRight = new TalonSRX(RobotMap.REAR_RIGHT_MOTOR_PORT);
-	
+	//NetworkTable table = NetworkTableInstance.getDefault().getTable("");
 	private Solenoid shifter = new Solenoid(RobotMap.SHIFTER_PORT);
 	//private AHRS navx;
 	private AnalogGyro navx;
@@ -324,7 +327,7 @@ public class Drivetrain extends Subsystem {
 	public boolean getShiftState() {
 		return shifter.get();
 	}
-	
+
 
 
 
