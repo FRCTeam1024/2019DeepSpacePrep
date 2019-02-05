@@ -84,15 +84,17 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		oi = new OI();
 		m_autonomousCommand = new TurnToTarget();
-		NetworkTableEntry xEntry;
-		NetworkTableEntry yEntry;
+		NetworkTableEntry tx;
+		NetworkTableEntry ty;
+		NetworkTableEntry ta;
 		Robot.sensors.startColorSensor();
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
-			NetworkTable table = NetworkTableInstance.getDefault().getTable("GRIP/myContoursReport");
+			//NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
-			xEntry = table.getEntry("X");
-			yEntry = table.getEntry("Y");
+
+		
+
 
 			//camera.setResolution(160, 120);
 			camera.setExposureManual(15);
@@ -305,27 +307,45 @@ public class Robot extends TimedRobot {
 		synchronized (imgLock) {
 			centerX1 = this.centerX1;
 		}
-		SmartDashboard.putNumber("Num Image Objects", numCameraObjects);
-		SmartDashboard.putNumber("Image 1 Center X", centerX1);
-		SmartDashboard.putNumber("Image 2 Center X", centerX2);
+		//SmartDashboard.putNumber("Num Image Objects", numCameraObjects);
+		//SmartDashboard.putNumber("Image 1 Center X", centerX1);
+		//SmartDashboard.putNumber("Image 2 Center X", centerX2);
 		// SmartDashboard.putNumber("Image 1 Center Y", centerY1);
 		// SmartDashboard.putNumber("Image 2 Center Y", centerY2);
 		// SmartDashboard.putNumber("r1.x", r1X);
 		// SmartDashboard.putNumber("r2.x", r2X);
 		// SmartDashboard.putNumber("r1.y", r1Y);
 		// SmartDashboard.putNumber("r2.y", r2Y);
-		SmartDashboard.putNumber("r1Width", r1Width);
-		SmartDashboard.putNumber("r2Width", r2Width);
+		//SmartDashboard.putNumber("r1Width", r1Width);
+		//SmartDashboard.putNumber("r2Width", r2Width);
 		//SmartDashboard.putString("size", "size(" + r1Size.width + ", " + r1Size.height + ")");
-		SmartDashboard.putNumber("Encoder Value:", getEncoderValue());
-		SmartDashboard.putNumber("R1 Area", getR1Area());
-		SmartDashboard.putNumber("R2 Area", getR2Area());
-		SmartDashboard.putNumber("Angle", drivetrain.getHeading());
+		//SmartDashboard.putNumber("Encoder Value:", getEncoderValue());
+		//SmartDashboard.putNumber("R1 Area", getR1Area());
+		//SmartDashboard.putNumber("R2 Area", getR2Area());
+		//SmartDashboard.putNumber("Angle", drivetrain.getHeading());
 		SmartDashboard.putData("Reset Gyro", new resetGyro());
-		SmartDashboard.putNumber("difx1", getdifX1());
-		SmartDashboard.putNumber("difx2", getdifX2());
+		//SmartDashboard.putNumber("difx1", getdifX1());
+		//SmartDashboard.putNumber("difx2", getdifX2());
 		SmartDashboard.putData("TurnToTarget", new TurnToTarget());
-		Robot.sensors.printValue();
+		//Robot.sensors.printValue();
+
+		NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+		NetworkTableEntry tx;
+		NetworkTableEntry ty;
+		NetworkTableEntry ta;
+		
+		tx = table.getEntry("tx");
+		ty = table.getEntry("ty");
+		ta = table.getEntry("ta");
+			//read values periodically
+			double x = tx.getDouble(0.0);
+			double y = ty.getDouble(0.0);
+			double area = ta.getDouble(0.0);
+
+			//post to smart dashboard periodically
+			SmartDashboard.putNumber("LimelightX", x);
+			SmartDashboard.putNumber("LimelightY", y);
+			SmartDashboard.putNumber("LimelightArea", area);
 	}
 	@Override
 	public void teleopInit() {
