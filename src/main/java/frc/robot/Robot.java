@@ -34,6 +34,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.I2C;
 
+import java.io.*;
+import java.util.logging.*;
+
+import edu.wpi.first.wpilibj.Filesystem;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -41,7 +45,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
-
+import frc.robot.logging.*;
 import frc.robot.grip.*;
 
 public class Robot extends TimedRobot {
@@ -55,7 +59,11 @@ public class Robot extends TimedRobot {
 	Command m_autonomousCommand;
 	Command turnTargetCommand;
 	Command driveTargetCommand;
+	Command driveCommand;
 	SendableChooser<String> autoChooser = new SendableChooser<String>();
+
+	// define the logger for this class. This should be done for every class
+    private static LogWrapper mLog;
 
 	private static final int IMG_WIDTH = 320;
 	private static final int IMG_HEIGHT = 240;
@@ -83,10 +91,14 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		oi = new OI();
-		m_autonomousCommand = new TurnToTarget();
+		
+		// m_autonomousCommand = new TurnToTarget();
+		m_autonomousCommand = new LogTest();
+		
 		NetworkTableEntry xEntry;
 		NetworkTableEntry yEntry;
 		Robot.sensors.startColorSensor();
+		initLogging();
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
 			NetworkTable table = NetworkTableInstance.getDefault().getTable("GRIP/myContoursReport");
@@ -110,7 +122,8 @@ public class Robot extends TimedRobot {
 				if (!pipeline.filterContoursOutput().isEmpty()) {
 					List<MatOfPoint> contours = pipeline.filterContoursOutput();
 					numCameraObjects = contours.size();
-					System.out.println("in pipeline, NOT EMPTY,num objects : " + numCameraObjects);
+					mLog.info("in pipeline, NOT EMPTY,num objects : " + numCameraObjects);
+					//System.out.println("in pipeline, NOT EMPTY,num objects : " + numCameraObjects);
 					// System.out.println(contours.get(0));
 					Rect r1 = Imgproc.boundingRect(contours.get(0));			
 					// System.out.println("r1 : " + r1);
@@ -169,7 +182,7 @@ public class Robot extends TimedRobot {
 					}
 					
 				} else {
-					System.out.println("in pipeline EMPTY ");
+					//System.out.println("in pipeline EMPTY ");
 					centerX1 = 0;
 					centerX2 = 0;
 				}
@@ -197,6 +210,42 @@ public class Robot extends TimedRobot {
 		
 	
 	}
+
+	private void initLogging() {
+		HelixEvents.getInstance().startLogging();
+		// try {
+        //     File dir = Filesystem.getDeployDirectory();
+        //     String logFile = "NOTFOUND";
+        //     if (dir.isDirectory() && dir.exists()) {
+        //         logFile = dir.getAbsolutePath() + "/logging.properties";
+        //     } else {
+		// 		System.out.println("Directory not found.");
+		// 	}
+        //     System.out.println("**********  logConfig: " + logFile + "  *********************");
+        //     // BufferedReader br = new BufferedReader(new FileReader(logFile));
+        //     // String line = null;
+        //     // while ((line = br.readLine()) != null) {
+        //     //     System.out.println(line);
+        //     // }
+        //     // br.close();
+        //     FileInputStream configFile = new FileInputStream(logFile);
+        //     LogManager.getLogManager().readConfiguration(configFile);
+        // } catch (IOException ex) {
+        //     System.out.println("WARNING: Could not open configuration file");
+        //     System.out.println("WARNING: Logging not configured (console output only)");
+        // }
+		// mLog = new LogWrapper(Robot.class.getName());
+        // try {
+        //     mLog.info("robotInit: ---------------------------------------------------");
+        //     // mControlBoard = ControlBoard.getInstance();
+        //     // mDriveSys = DriveSys.getInstance();
+        //     // mNavXsys = NavXSys.getInstance();
+        //     // mDriveDistCmd = new DriveDistCmd(5);
+        //     mLog.info("robotInit: Completed   ---------------------------------------");
+        // } catch (Exception ex) {
+        //     mLog.severe(ex, "Robot.robotInit:  exception: " + ex.getMessage());
+        // }
+	}
 	
 	public static synchronized double getCenterX1(){
 		synchronized (imgLock) {
@@ -222,9 +271,6 @@ public class Robot extends TimedRobot {
 	}
 	public static double getNumImageObjects() {
 		return numCameraObjects;
-	}
-	public static double getEncoderValue() {
-		return drivetrain.encoder.getDistance();
 	}
 	public static double getr1Width() {
 		return r1Width;
@@ -317,7 +363,6 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("r1Width", r1Width);
 		SmartDashboard.putNumber("r2Width", r2Width);
 		//SmartDashboard.putString("size", "size(" + r1Size.width + ", " + r1Size.height + ")");
-		SmartDashboard.putNumber("Encoder Value:", getEncoderValue());
 		SmartDashboard.putNumber("R1 Area", getR1Area());
 		SmartDashboard.putNumber("R2 Area", getR2Area());
 		SmartDashboard.putNumber("Angle", drivetrain.getHeading());
@@ -325,6 +370,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("difx1", getdifX1());
 		SmartDashboard.putNumber("difx2", getdifX2());
 		SmartDashboard.putData("TurnToTarget", new TurnToTarget());
+		Robot.drivetrain.outputToSmartDashboard();
 		Robot.sensors.printValue();
 	}
 	@Override
@@ -340,16 +386,29 @@ public class Robot extends TimedRobot {
 			m_autonomousCommand.cancel();
 		}
 		//intake.cubeLight.set(Relay.Value.kForward);
-
-	
-		driveTargetCommand = new DriveToTargetStraight(0.15, 0.15);
+		
+		
+		//driveTargetCommand = new DriveToTargetStraight(0.15, 0.15);
 		
 
 	}
 	
 	@Override
 	public void teleopPeriodic() {
+
+		if(Robot.drivetrain.lookForGroundTape() == true){
+		//LED = GREEN
+		// System.out.println("LED ON");
+		}
+		else{
+		//LED = OFF
+		// System.out.println("LED OFF");
+		}
 		Scheduler.getInstance().run();
+		outputCameraToSmartDashboard();
+		
+		
+	
 		//intake.setCubeLight();
 		//drivetrain.outputToSmartDashboard();
 		//lift.outputToSmartDashboard();
@@ -357,7 +416,7 @@ public class Robot extends TimedRobot {
 		//intake.cubeLight.set(Relay.Value.kForward);
 
 		//turnTargetCommand.start();
-		outputCameraToSmartDashboard();
+		
 	
 	}
 	

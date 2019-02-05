@@ -42,7 +42,7 @@ public class TurnToTarget extends Command {
     
    double difX1 = targetX - Robot.getCenterX1();
    double difX2 = targetX - Robot.getCenterX2();
-    System.out.println("Num Objects : " + Robot.getNumImageObjects());
+    //System.out.println("Num Objects : " + Robot.getNumImageObjects());
     if(Robot.getNumImageObjects() < 2) {
       if(Robot.getdifX1() < 0) { // single target on right side, so we want to turn right
         // Robot.drivetrain.turn(0.15);
@@ -70,12 +70,12 @@ public class TurnToTarget extends Command {
 
 
     }
-     /* System.out.println("Difx1: " + difX1);
-      System.out.println("Difx2: " + difX2);
-      System.out.println("Center X 1: " + Robot.getCenterX1());
-      System.out.println("Center X 2: " + Robot.getCenterX2());
+     /* //System.out.println("Difx1: " + difX1);
+      //System.out.println("Difx2: " + difX2);
+      //System.out.println("Center X 1: " + Robot.getCenterX1());
+      //System.out.println("Center X 2: " + Robot.getCenterX2());
       if(Math.abs(difX1 - difX2) < 10) {
-        System.out.println("FINISHING TURN TO TARGET");
+        //System.out.println("FINISHING TURN TO TARGET");
         Robot.drivetrain.turn(0);
         isFinished = true;
       } else {
