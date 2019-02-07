@@ -33,9 +33,9 @@ public class TurnToTarget extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Robot.oi.lJoy.getTriggerPressed()){
+   /* if(Robot.oi.lJoy.getTriggerPressed()){
       isFinished = true;
-    }
+    }*/
 
 
     double targetX = 160;

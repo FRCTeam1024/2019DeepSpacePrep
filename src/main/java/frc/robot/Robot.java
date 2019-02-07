@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
 	Command m_autonomousCommand;
 	Command turnTargetCommand;
 	Command driveTargetCommand;
+
 	SendableChooser<String> autoChooser = new SendableChooser<String>();
 
 	private static final int IMG_WIDTH = 320;
@@ -80,6 +81,8 @@ public class Robot extends TimedRobot {
 	
 	private static final Object imgLock = new Object();
 
+	private static int cameraMode = 0;
+
 	@Override
 	public void robotInit() {
 		oi = new OI();
@@ -88,11 +91,10 @@ public class Robot extends TimedRobot {
 		NetworkTableEntry ty;
 		NetworkTableEntry ta;
 		Robot.sensors.startColorSensor();
+
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
 			//NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-
-
 		
 
 
@@ -257,7 +259,14 @@ public class Robot extends TimedRobot {
 		return difX2;
 		
 	}
-	
+	public static int switchCameraMode(){
+		if(cameraMode == 0){
+			cameraMode = 1;
+		}else if(cameraMode == 1){
+			cameraMode = 0;
+		}
+		return cameraMode;
+	}
 
 	@Override
 	public void disabledInit() {
@@ -327,6 +336,7 @@ public class Robot extends TimedRobot {
 		//SmartDashboard.putNumber("difx1", getdifX1());
 		//SmartDashboard.putNumber("difx2", getdifX2());
 		SmartDashboard.putData("TurnToTarget", new TurnToTarget());
+		SmartDashboard.putData("Change Camera Mode", new SwitchCameraMode());
 		//Robot.sensors.printValue();
 
 		NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -377,6 +387,12 @@ public class Robot extends TimedRobot {
 		//intake.cubeLight.set(Relay.Value.kForward);
 
 		//turnTargetCommand.start();
+		if(Robot.oi.lJoy.getTriggerPressed()){
+			NetworkTableInstance.getDefault().getTable("limelight").getEntry("visionProcessingOn").setNumber(0);
+		}
+		if(Robot.oi.rJoy.getTriggerPressed()){
+			NetworkTableInstance.getDefault().getTable("limelight").getEntry("driverCamOn").setNumber(1);
+		}
 		outputCameraToSmartDashboard();
 	
 	}
