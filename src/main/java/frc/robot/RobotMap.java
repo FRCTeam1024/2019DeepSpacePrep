@@ -45,6 +45,8 @@ public class RobotMap {
 	//Digital
 	public static final int DRIVE_ENCODER_CHANNEL_A = 0;
 	public static final int DRIVE_ENCODER_CHANNEL_B = 1;
+	public static final int DRIVE_ENCODER2_CHANNEL_A = 3;
+	public static final int DRIVE_ENCODER2_CHANNEL_B = 4;
 	public static final int LEFT_BUMP_CUBE_DETECTOR_PORT = 2;
 	public static final int RIGHT_BUMP_CUBE_DETECTOR_PORT = 3;
 	

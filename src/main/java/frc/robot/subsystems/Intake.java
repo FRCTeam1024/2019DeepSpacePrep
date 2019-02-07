@@ -27,7 +27,7 @@ public class Intake extends Subsystem {
     //private DigitalInput rightBumpDetector = new DigitalInput(RobotMap.RIGHT_BUMP_CUBE_DETECTOR_PORT);
     
     public Relay cubeLight = new Relay(0);
-    public DigitalOutput cube2 = new DigitalOutput(4);
+    // public DigitalOutput cube2 = new DigitalOutput(4);
     private boolean intakeInState = true;
     private boolean intakeWideState = true;
     
@@ -35,11 +35,11 @@ public class Intake extends Subsystem {
     }
     
     public void setCubeLight() {
-    	if (cubeDetecterState() != true) {
-    		cube2.set(true);
-    	} else {
-    		cube2.set(false);
-    	}
+    	// if (cubeDetecterState() != true) {
+    	// 	cube2.set(true);
+    	// } else {
+    	// 	cube2.set(false);
+    	// }
     }
     public void initDefaultCommand() {
     	setDefaultCommand(new IntakeWithJoystick());

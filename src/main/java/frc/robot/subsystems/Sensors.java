@@ -29,18 +29,21 @@ public void startColorSensor(){
 }
 
 public int red(){
+    //buf.reset();
     ColorSensor.read(0x80 | 0x20 | 0x16, 2, buf);
     buf.order(ByteOrder.LITTLE_ENDIAN);
     return buf.getShort(0);
 }
 
 public int green(){
+    //buf.reset();
     ColorSensor.read(0x80 | 0x20 | 0x18, 2, buf);
     buf.order(ByteOrder.LITTLE_ENDIAN);
     return buf.getShort(0);
 }
 
 public int blue(){
+    //buf.reset();
     ColorSensor.read(0x80 | 0x20 | 0x1A, 2, buf);
     buf.order(ByteOrder.LITTLE_ENDIAN);
     return buf.getShort(0);
@@ -53,6 +56,7 @@ public void printValue(){
     SmartDashboard.putNumber("Green Value", green());
     blue();
     SmartDashboard.putNumber("Blue Value", blue());
+    //System.out.println(buf);
 }
 
 

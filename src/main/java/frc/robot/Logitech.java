@@ -118,8 +118,8 @@ public class Logitech extends Joystick{
 			// I don't know what to do here
 			// throw new UnsupportedOperationException("Integer supplied (" +
 			// angle + ") is not a possible value of this enum.");
-			System.out.println(
-					"[XboxController.DPAD.getEnum()] Angle supplied (" + angle + ") has no related DPad direction");
+			//System.out.println(
+					// "[XboxController.DPAD.getEnum()] Angle supplied (" + angle + ") has no related DPad direction");
 			return DPAD.UP;
 		}
 	}

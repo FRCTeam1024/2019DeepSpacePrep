@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.subsystems.*;
 import frc.robot.commands.DriveWithJoysticks;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -65,6 +66,7 @@ public class Drivetrain extends Subsystem {
 	public double turnkF = Constants.TURN_KF;
 	
 	public Encoder encoder = new Encoder(RobotMap.DRIVE_ENCODER_CHANNEL_A, RobotMap.DRIVE_ENCODER_CHANNEL_B, false, EncodingType.k4X);
+	public Encoder encoder2 = new Encoder(3,4, false, EncodingType.k4X);
 	
 	public PIDController posPID;
 	public PIDController turnPID;
@@ -105,7 +107,10 @@ public class Drivetrain extends Subsystem {
         
         encoder.setPIDSourceType(PIDSourceType.kDisplacement);
         encoder.setDistancePerPulse(Constants.DRIVETRAIN_ENCODER_DISTANCE_PER_PULSE);
-        encoder.setReverseDirection(true);
+		encoder.setReverseDirection(true);
+		encoder2.setPIDSourceType(PIDSourceType.kDisplacement);
+        encoder2.setDistancePerPulse(Constants.DRIVETRAIN_ENCODER_DISTANCE_PER_PULSE);
+        encoder2.setReverseDirection(false);
         
         posPID = new PIDController(Constants.POS_KP, Constants.POS_KI, Constants.POS_KD, encoder, output->{});
 	
@@ -136,12 +141,12 @@ public class Drivetrain extends Subsystem {
 	
 	public void shiftLow() {
 		shifter.set(false);
-		System.out.println("Shifting Low");
+		////System.out.println("Shifting Low");
 	}
 	
 	public void shiftHigh() {
 		shifter.set(true);
-		System.out.println("Shifting High");
+		//System.out.println("Shifting High");
 	}
 	
 	/**
@@ -291,13 +296,15 @@ public class Drivetrain extends Subsystem {
 	}
 	
 	public void outputToSmartDashboard() {
-		SmartDashboard.putNumber("Gyro Angle", getHeading());
+		//SmartDashboard.putNumber("Gyro Angle", getHeading());
 		//System.out.println("Gyro: " + getHeading());
-    	SmartDashboard.putNumber("Optical Encoder Distance (IN)", getOpticalDistanceInches());
-    	SmartDashboard.putNumber("Encoder Raw", encoder.getRaw());
-    	SmartDashboard.putNumber("posPID.get()", posPID.get());
-    	SmartDashboard.putNumber("turnPID.get()", turnPID.get());
-    	SmartDashboard.putBoolean("onTarget", turnPID.onTarget());
+    	//SmartDashboard.putNumber("Optical Encoder Distance (IN)", getOpticalDistanceInches());
+    	//SmartDashboard.putNumber("Encoder Raw", encoder.getRaw());
+    	//SmartDashboard.putNumber("posPID.get()", posPID.get());
+    	//SmartDashboard.putNumber("turnPID.get()", turnPID.get());
+		//SmartDashboard.putBoolean("onTarget", turnPID.onTarget());
+		SmartDashboard.putNumber("Encoder Value:", encoder.getDistance());
+		SmartDashboard.putNumber("Encoder 2 Value", encoder2.getDistance());
 	}
 
 	public boolean pidDriveUntil(double initialSpeed) {
@@ -327,7 +334,16 @@ public class Drivetrain extends Subsystem {
 	public boolean getShiftState() {
 		return shifter.get();
 	}
+	public boolean lookForGroundTape(){
+		if(Robot.sensors.red() >= 400 && Robot.sensors.blue() >= 400 && Robot.sensors.green() >= 400){
+			return true;
+		}
+		else{
+		return false;
+		}
 
+
+	}
 
 
 
