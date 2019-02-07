@@ -17,6 +17,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.HttpCamera;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -105,6 +106,7 @@ public class Robot extends TimedRobot {
 		
 		try {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+			HttpCamera limelight = CameraServer.getInstance().addAxisCamera("http://10.10.24.11:5801/");
 			//NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 		
 
@@ -383,25 +385,36 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("CurveToTarget", new TurnToTarget());
 		SmartDashboard.putData("Change Camera Mode", new SwitchCameraMode());
 		SmartDashboard.putData("TurnToCenterLimelight", new TurnToCenterLimelight());
-		//Robot.sensors.printValue();
+		Robot.sensors.printValue();
 
 		NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 		NetworkTableEntry tx;
 		NetworkTableEntry ty;
 		NetworkTableEntry ta;
+		NetworkTableEntry thor;
+		NetworkTableEntry tvert;
 		
 		tx = table.getEntry("tx");
 		ty = table.getEntry("ty");
 		ta = table.getEntry("ta");
+		thor = table.getEntry("thor");
+		tvert = table.getEntry("tvert");
+
 			//read values periodically
 			LimeX = tx.getDouble(0.0);
 			double y = ty.getDouble(0.0);
 			double area = ta.getDouble(0.0);
+			double hor = thor.getDouble(0.0);
+			double vert = tvert.getDouble(0.0);
+			double areaCalc = hor*vert;
 
 			//post to smart dashboard periodically
 			SmartDashboard.putNumber("LimelightX", LimeX);
 			SmartDashboard.putNumber("LimelightY", y);
 			SmartDashboard.putNumber("LimelightArea", area);
+			SmartDashboard.putNumber("Limelight Horizontal", hor);
+			SmartDashboard.putNumber("Limelight Vertical", vert);
+			SmartDashboard.putNumber("LimelightArea Calculated", areaCalc);
 	}
 	
 	public static double getLimeLightX(){
@@ -451,12 +464,12 @@ public class Robot extends TimedRobot {
 		//intake.cubeLight.set(Relay.Value.kForward);
 
 		//turnTargetCommand.start();
-		if(Robot.oi.lJoy.getTriggerPressed()){
+	/*	if(Robot.oi.lJoy.getTriggerPressed()){
 			NetworkTableInstance.getDefault().getTable("limelight").getEntry("visionProcessingOn").setNumber(0);
 		}
 		if(Robot.oi.rJoy.getTriggerPressed()){
 			NetworkTableInstance.getDefault().getTable("limelight").getEntry("driverCamOn").setNumber(1);
-		}
+		}*/
 		outputCameraToSmartDashboard();
 	
 	}

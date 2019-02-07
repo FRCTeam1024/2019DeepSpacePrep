@@ -90,6 +90,7 @@ public class Constants {
 	public static final int LEFT_JOYSTICK_PORT = 0;
 	public static final int RIGHT_JOYSTICK_PORT = 1;
 	public static final int LOGITECH_JOYSTICK_PORT = 2;
+	public static final int BUTTON_PANNEL_PORT = 3;
 	
 	//public static final int LEFT_JOYSTICK_TRIGGER = 0;
 	public static final int LIFT_STICK_AXIS = 3;
@@ -98,6 +99,7 @@ public class Constants {
 	public static final int SHIFT_HIGH_BUTTON = 7;
 	public static final int SHIFT_LOW_BUTTON = 10;
 	
+	public static final int TURN_CENTER_LIMELIGHT_BUTTON = 1;
 	
 
 	// public static final int INTAKE_SLIDE_IN_BUTTON = 8;

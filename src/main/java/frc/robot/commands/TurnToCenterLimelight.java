@@ -14,7 +14,7 @@ import frc.robot.*;
 
 public class TurnToCenterLimelight extends Command {
 
-  private boolean isFinished = false;
+  private boolean isFinished;
   
   
   public TurnToCenterLimelight() {
@@ -24,6 +24,7 @@ public class TurnToCenterLimelight extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    isFinished = false;
     
   }
 
