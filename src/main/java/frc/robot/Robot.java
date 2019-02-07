@@ -84,6 +84,8 @@ public class Robot extends TimedRobot {
 	private static int r1Height;
 	private static int r2Height;
 
+	private static double LimeX;
+
 	private static double numCameraObjects = 0.0;
 	private RobotDrive drive;
 	
@@ -374,12 +376,13 @@ public class Robot extends TimedRobot {
 		//SmartDashboard.putNumber("Encoder Value:", getEncoderValue());
 		//SmartDashboard.putNumber("R1 Area", getR1Area());
 		//SmartDashboard.putNumber("R2 Area", getR2Area());
-		//SmartDashboard.putNumber("Angle", drivetrain.getHeading());
+		SmartDashboard.putNumber("Angle", drivetrain.getHeading());
 		SmartDashboard.putData("Reset Gyro", new resetGyro());
 		//SmartDashboard.putNumber("difx1", getdifX1());
 		//SmartDashboard.putNumber("difx2", getdifX2());
-		SmartDashboard.putData("TurnToTarget", new TurnToTarget());
+		SmartDashboard.putData("CurveToTarget", new TurnToTarget());
 		SmartDashboard.putData("Change Camera Mode", new SwitchCameraMode());
+		SmartDashboard.putData("TurnToCenterLimelight", new TurnToCenterLimelight());
 		//Robot.sensors.printValue();
 
 		NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -391,15 +394,20 @@ public class Robot extends TimedRobot {
 		ty = table.getEntry("ty");
 		ta = table.getEntry("ta");
 			//read values periodically
-			double x = tx.getDouble(0.0);
+			LimeX = tx.getDouble(0.0);
 			double y = ty.getDouble(0.0);
 			double area = ta.getDouble(0.0);
 
 			//post to smart dashboard periodically
-			SmartDashboard.putNumber("LimelightX", x);
+			SmartDashboard.putNumber("LimelightX", LimeX);
 			SmartDashboard.putNumber("LimelightY", y);
 			SmartDashboard.putNumber("LimelightArea", area);
 	}
+	
+	public static double getLimeLightX(){
+		return LimeX;
+	}
+
 	@Override
 	public void teleopInit() {
 		
@@ -433,11 +441,11 @@ public class Robot extends TimedRobot {
 		}
 		Scheduler.getInstance().run();
 		outputCameraToSmartDashboard();
-		
+
 		
 	
 		//intake.setCubeLight();
-		//drivetrain.outputToSmartDashboard();
+		drivetrain.outputToSmartDashboard();
 		//lift.outputToSmartDashboard();
 		//intake.outputToSmartDashboard();
 		//intake.cubeLight.set(Relay.Value.kForward);
