@@ -105,6 +105,11 @@
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Limelight Vertical",
                   "_title": "Limelight Vertical"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Limelight Distance",
+                  "_title": "Limelight Distance"
                 }
               ]
             }
@@ -145,11 +150,6 @@
                   "_source0": "network_table:///SmartDashboard/Reset Gyro",
                   "_title": "resetGyro"
                 },
-                "1,0": {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/TurnToCenterLimelight",
-                  "_title": "TurnToCenterLimelight"
-                },
                 "0,1": {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/CurveToTarget",
@@ -161,6 +161,76 @@
                   "_title": "Change Camera Mode"
                 }
               }
+            }
+          },
+          "0,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Encoder Value",
+              "_title": "Encoder Value"
+            }
+          },
+          "1,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Limelight_PipelineName",
+              "_title": "Limelight_PipelineName"
+            }
+          },
+          "2,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Limelight_Stream",
+              "_title": "Limelight_Stream"
+            }
+          },
+          "3,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Limelight_Interface",
+              "_title": "Limelight_Interface"
+            }
+          },
+          "4,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/TurnToCenterLimelight/running",
+              "_title": "TurnToCenterLimelight/running",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "5,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/CurveHabToRocket/running",
+              "_title": "CurveHabToRocket/running",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }
@@ -309,6 +379,52 @@
               "_title": "Intake",
               "Layout/Label position": "BOTTOM",
               "_children": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Commands",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 64.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "tiles": {
+          "1,0": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/CurveHabToRocket",
+              "_title": "CurveHabToRocket"
+            }
+          },
+          "1,2": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/TurnToCenterLimelight",
+              "_title": "TurnToCenterLimelight"
+            }
+          },
+          "4,0": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/HabToRocketHatch",
+              "_title": "HabToRocketHatch"
             }
           }
         }

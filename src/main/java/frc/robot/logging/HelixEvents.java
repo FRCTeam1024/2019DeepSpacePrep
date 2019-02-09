@@ -13,6 +13,7 @@ import java.util.Queue;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 
+// can view log files at ftp://10.10.24.2/home/lvuser/logs/
 public class HelixEvents {
  	private static HelixEvents INSTANCE = new HelixEvents();
  	public static HelixEvents getInstance() {

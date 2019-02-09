@@ -105,95 +105,95 @@ public class Robot extends TimedRobot {
 		initLogging();
 		
 		try {
-			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
+			// UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
 			HttpCamera limelight = CameraServer.getInstance().addAxisCamera("http://10.10.24.11:5801/");
 			//NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 		
 
 
 			//camera.setResolution(160, 120);
-			camera.setExposureManual(15);
-			camera.setBrightness(50);
-			camera.setWhiteBalanceManual(255);
+			// camera.setExposureManual(15);
+			// camera.setBrightness(50);
+			// camera.setWhiteBalanceManual(255);
 
-			camera.setFPS(30);
+			// camera.setFPS(30);
 
-			camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+			// camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 			outputCameraToSmartDashboard();
-			visionThread = new VisionThread(camera, new ReflectiveTapeTest(), pipeline -> {
+			// visionThread = new VisionThread(camera, new ReflectiveTapeTest(), pipeline -> {
 
-				// System.out.println("in pipeline");
-				numCameraObjects = 0.0;
-				if (!pipeline.filterContoursOutput().isEmpty()) {
-					List<MatOfPoint> contours = pipeline.filterContoursOutput();
-					numCameraObjects = contours.size();
-					mLog.info("in pipeline, NOT EMPTY,num objects : " + numCameraObjects);
-					//System.out.println("in pipeline, NOT EMPTY,num objects : " + numCameraObjects);
-					// System.out.println(contours.get(0));
-					Rect r1 = Imgproc.boundingRect(contours.get(0));			
-					// System.out.println("r1 : " + r1);
-					synchronized (imgLock) {
-						r1Width = r1.width;
-						centerX1 = r1.x + (r1Width / 2);
-						r1X = r1.x;
-						r1Y = r1.y;
-						r1Height = r1.height;
-						r1Size = r1.size();
-						centerY1 = r1.y + (r1.height / 2);
-						r1Size = r1.size();
-						// System.out.println("r1 size:" + r1Size);
-					}
-					if(contours.size() > 1) {
-						Rect r2 = Imgproc.boundingRect(contours.get(1));
-						// System.out.println("r2 : " + r2);
+			// 	// System.out.println("in pipeline");
+			// 	numCameraObjects = 0.0;
+			// 	if (!pipeline.filterContoursOutput().isEmpty()) {
+			// 		List<MatOfPoint> contours = pipeline.filterContoursOutput();
+			// 		numCameraObjects = contours.size();
+			// 		mLog.info("in pipeline, NOT EMPTY,num objects : " + numCameraObjects);
+			// 		//System.out.println("in pipeline, NOT EMPTY,num objects : " + numCameraObjects);
+			// 		// System.out.println(contours.get(0));
+			// 		Rect r1 = Imgproc.boundingRect(contours.get(0));			
+			// 		// System.out.println("r1 : " + r1);
+			// 		synchronized (imgLock) {
+			// 			r1Width = r1.width;
+			// 			centerX1 = r1.x + (r1Width / 2);
+			// 			r1X = r1.x;
+			// 			r1Y = r1.y;
+			// 			r1Height = r1.height;
+			// 			r1Size = r1.size();
+			// 			centerY1 = r1.y + (r1.height / 2);
+			// 			r1Size = r1.size();
+			// 			// System.out.println("r1 size:" + r1Size);
+			// 		}
+			// 		if(contours.size() > 1) {
+			// 			Rect r2 = Imgproc.boundingRect(contours.get(1));
+			// 			// System.out.println("r2 : " + r2);
 
-						synchronized (imgLock) {
-							r2Width = r2.width;
-							centerX2 = r2.x + (r2.width / 2);
-							r2X = r2.x;
-							r2Y = r2.y;
-							r2Height = r2.height;
-							centerY2 = r2.y + (r2.height / 2);
+			// 			synchronized (imgLock) {
+			// 				r2Width = r2.width;
+			// 				centerX2 = r2.x + (r2.width / 2);
+			// 				r2X = r2.x;
+			// 				r2Y = r2.y;
+			// 				r2Height = r2.height;
+			// 				centerY2 = r2.y + (r2.height / 2);
 
-						}
+			// 			}
 
-						// make sure to assign the left-most image to centerX1
-						if(centerX2 < centerX1) {
-							synchronized (imgLock) {
-								double tempSave = centerX1;
-								centerX1 = centerX2;
-								centerX2 = tempSave;
-								tempSave = r1X;
-								r1X = r2X;
-								r2X = tempSave;
-								tempSave = r1Y;
-								r1Y = r2Y;
-								r2Y = tempSave;
-								int tempSaveInt = r1Width;
-								r1Width = r2Width;
-								r2Width = tempSaveInt;
-								tempSaveInt = r1Height;
-								r1Height = r2Height;
-								r2Height = tempSaveInt;
+			// 			// make sure to assign the left-most image to centerX1
+			// 			if(centerX2 < centerX1) {
+			// 				synchronized (imgLock) {
+			// 					double tempSave = centerX1;
+			// 					centerX1 = centerX2;
+			// 					centerX2 = tempSave;
+			// 					tempSave = r1X;
+			// 					r1X = r2X;
+			// 					r2X = tempSave;
+			// 					tempSave = r1Y;
+			// 					r1Y = r2Y;
+			// 					r2Y = tempSave;
+			// 					int tempSaveInt = r1Width;
+			// 					r1Width = r2Width;
+			// 					r2Width = tempSaveInt;
+			// 					tempSaveInt = r1Height;
+			// 					r1Height = r2Height;
+			// 					r2Height = tempSaveInt;
 
-								// System.out.println("CenterX2 < CenterX1");
-							}
-						}
-					} else { // only 1 object 
-						synchronized (imgLock) {
-							centerX2 = 0;
-							r2Width = 0;
-						}
-					}
+			// 					// System.out.println("CenterX2 < CenterX1");
+			// 				}
+			// 			}
+			// 		} else { // only 1 object 
+			// 			synchronized (imgLock) {
+			// 				centerX2 = 0;
+			// 				r2Width = 0;
+			// 			}
+			// 		}
 					
-				} else {
-					//System.out.println("in pipeline EMPTY ");
-					centerX1 = 0;
-					centerX2 = 0;
-				}
+			// 	} else {
+			// 		//System.out.println("in pipeline EMPTY ");
+			// 		centerX1 = 0;
+			// 		centerX2 = 0;
+			// 	}
 				
-			});
-			visionThread.start();
+			// });
+			// visionThread.start();
 /*
 			visionThread = new VisionThread(camera, new GripBlobPipeline(), pipeline -> {
 
@@ -360,9 +360,9 @@ public class Robot extends TimedRobot {
 	private void outputCameraToSmartDashboard() {
 		// display values from camera
 		double centerX1;
-		synchronized (imgLock) {
-			centerX1 = this.centerX1;
-		}
+		// synchronized (imgLock) {
+		// 	centerX1 = this.centerX1;
+		// }
 		//SmartDashboard.putNumber("Num Image Objects", numCameraObjects);
 		//SmartDashboard.putNumber("Image 1 Center X", centerX1);
 		//SmartDashboard.putNumber("Image 2 Center X", centerX2);
@@ -385,6 +385,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("CurveToTarget", new TurnToTarget());
 		SmartDashboard.putData("Change Camera Mode", new SwitchCameraMode());
 		SmartDashboard.putData("TurnToCenterLimelight", new TurnToCenterLimelight());
+		SmartDashboard.putData("CurveHabToRocket", new CurveHabToRocket());
+		SmartDashboard.putData("HabToRocketHatch", new HabToRocketHatch());
 		Robot.sensors.printValue();
 
 		NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -400,21 +402,21 @@ public class Robot extends TimedRobot {
 		thor = table.getEntry("thor");
 		tvert = table.getEntry("tvert");
 
-			//read values periodically
-			LimeX = tx.getDouble(0.0);
-			double y = ty.getDouble(0.0);
-			double area = ta.getDouble(0.0);
-			double hor = thor.getDouble(0.0);
-			double vert = tvert.getDouble(0.0);
-			double areaCalc = hor*vert;
+		//read values periodically
+		LimeX = tx.getDouble(0.0);
+		double y = ty.getDouble(0.0);
+		double area = ta.getDouble(0.0);
+		double hor = thor.getDouble(0.0);
+		double vert = tvert.getDouble(0.0);
+		double areaCalc = hor*vert;
 
-			//post to smart dashboard periodically
-			SmartDashboard.putNumber("LimelightX", LimeX);
-			SmartDashboard.putNumber("LimelightY", y);
-			SmartDashboard.putNumber("LimelightArea", area);
-			SmartDashboard.putNumber("Limelight Horizontal", hor);
-			SmartDashboard.putNumber("Limelight Vertical", vert);
-			SmartDashboard.putNumber("LimelightArea Calculated", areaCalc);
+		//post to smart dashboard periodically
+		SmartDashboard.putNumber("LimelightX", LimeX);
+		SmartDashboard.putNumber("LimelightY", y);
+		SmartDashboard.putNumber("LimelightArea", area);
+		SmartDashboard.putNumber("Limelight Horizontal", hor);
+		SmartDashboard.putNumber("Limelight Vertical", vert);
+		SmartDashboard.putNumber("LimelightArea Calculated", areaCalc);
 	}
 	
 	public static double getLimeLightX(){
@@ -435,10 +437,8 @@ public class Robot extends TimedRobot {
 		}
 		//intake.cubeLight.set(Relay.Value.kForward);
 		
-		
 		//driveTargetCommand = new DriveToTargetStraight(0.15, 0.15);
 		
-
 	}
 	
 	@Override
