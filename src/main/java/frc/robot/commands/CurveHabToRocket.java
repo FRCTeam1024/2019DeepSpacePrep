@@ -24,6 +24,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 // S-curves from position 2, in front of the Hab, but not on it, to the rocket
+// start position faces straight out from Hab
 public class CurveHabToRocket extends Command {
 
   boolean isFinished = false;
@@ -62,9 +63,10 @@ public class CurveHabToRocket extends Command {
           // encoder value went about 42 for 3 feet
           log("END STEP 2, setting to STEP 3");
           currentStep = 3;
+          Robot.drivetrain.resetGyro();
         }
     } else if(currentStep == 3 ) {
-      if(Robot.drivetrain.getHeading() > -40) {
+      if(Robot.drivetrain.getHeading() > 60) {
         log("END STEP 3");
         isFinished = true;
       }
