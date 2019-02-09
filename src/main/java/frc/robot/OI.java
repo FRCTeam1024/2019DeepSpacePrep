@@ -45,8 +45,7 @@ public class OI {
     logi.dPad.down.whenPressed(new IntakeRetract());
 		logi.dPad.up.whenPressed(new IntakeExtend());
 		//logi.dPad.left.whenPressed(new IntakeNarrow());
-		//logi.dPad.right.whenPress
-		ed(new IntakeFlat());
+		//logi.dPad.right.whenPress\ed(new IntakeFlat());
 		logi.dPad.upLeft.whenPressed(new IntakeExtendNarrow());
 		logi.dPad.upRight.whenPressed(new IntakeExtendFlat());
 		logi.a.whenPressed(new TurnToTarget());
